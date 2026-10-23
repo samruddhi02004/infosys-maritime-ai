@@ -149,20 +149,21 @@ def send_otp_email(to_email: str, otp: str) -> Tuple[bool, str]:
 
     # Build MIME message with anti-spam RFC headers
     msg = MIMEMultipart("alternative")
-    msg["From"] = f"Infosys Portal <{sender_email}>"
+    msg["From"] = f"AI for Maritime Freight Pricing and Route <{sender_email}>"
     msg["To"] = clean_to
-    msg["Subject"] = "Infosys Portal - Password Reset Verification Code"
+    msg["Subject"] = "AI for Maritime Freight Pricing and Route - Password Reset Verification Code"
     msg["Date"] = formatdate(localtime=True)
     msg["Message-ID"] = make_msgid()
     msg["Reply-To"] = sender_email
 
     # Plaintext fallback
     plain_text = (
+        f"AI for Maritime Freight Pricing and Route\n"
         f"Infosys Portal - Password Reset Verification Code\n\n"
         f"Your one-time verification code is: {otp}\n\n"
         f"This code will expire in {OTP_EXPIRY_MINUTES} minutes.\n"
         f"If you did not request this password reset, please ignore this email.\n\n"
-        f"Infosys Springboard Internship 7.0 - User Authentication Module"
+        f"Infosys Springboard Internship 7.0 - AI for Maritime Freight Pricing and Route"
     )
 
     # Professional HTML template matching the Light Theme (warm white, deep navy, teal)
@@ -196,7 +197,7 @@ def send_otp_email(to_email: str, otp: str) -> Tuple[bool, str]:
             }}
             .title {{
                 color: #0f172a;
-                font-size: 22px;
+                font-size: 20px;
                 font-weight: 700;
                 margin: 0;
             }}
@@ -248,8 +249,8 @@ def send_otp_email(to_email: str, otp: str) -> Tuple[bool, str]:
     <body>
         <div class="card">
             <div class="header">
-                <div class="title">Infosys Portal</div>
-                <div class="subtitle">Secure Password Recovery</div>
+                <div class="title">AI for Maritime Freight Pricing and Route</div>
+                <div class="subtitle">Secure Password Recovery &bull; Milestone 1</div>
             </div>
             <div class="content">
                 <p>Hello,</p>
@@ -261,7 +262,7 @@ def send_otp_email(to_email: str, otp: str) -> Tuple[bool, str]:
                 <p>If you did not request a password reset, you can safely disregard this email. Your existing password will remain secure.</p>
             </div>
             <div class="footer">
-                Infosys Springboard Internship 7.0 &bull; Milestone 1: User Authentication Module<br>
+                Infosys Springboard Internship 7.0 &bull; AI for Maritime Freight Pricing and Route<br>
                 This is an automated system notification.
             </div>
         </div>

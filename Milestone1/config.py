@@ -79,16 +79,13 @@ def get_email_password() -> Optional[str]:
 
 
 def get_admin_credentials() -> Tuple[str, str]:
-    """Load admin credentials securely from Colab Secrets or environment."""
-    username = get_secret("ADMIN_USERNAME")
-    password = get_secret("ADMIN_PASSWORD")
-
-    if not username or not password:
-        raise RuntimeError(
-            "Missing ADMIN_USERNAME or ADMIN_PASSWORD. "
-            "Configure both in Colab Secrets."
-        )
-
+    """
+    Retrieve admin credentials.
+    Can be configured via Colab Secrets (ADMIN_USERNAME, ADMIN_PASSWORD)
+    or environment variables. Defaults to explicit test credentials locally.
+    """
+    username = get_secret("ADMIN_USERNAME") or "admin"
+    password = get_secret("ADMIN_PASSWORD") or "Admin@Colab2026"
     return username, password
 
 

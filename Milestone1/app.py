@@ -1,5 +1,6 @@
 """
 Main Streamlit application for Milestone 1: User Authentication Module.
+Project: AI for Maritime Freight Pricing and Route
 
 Meets all Milestone 1 requirements:
 - Login via Username or Email with generic error masking
@@ -10,7 +11,7 @@ Meets all Milestone 1 requirements:
 - Forgot Password flow offering both Security Question and Email OTP routes
 - User Dashboard with welcome banner and logout
 - Separate Admin Login with registered user listing (passwords never exposed)
-- Distinctive professional light theme (warm white, deep navy, teal)
+- Distinctive executive maritime light theme (warm alabaster, deep navy, radiant teal)
 """
 
 import time
@@ -55,6 +56,10 @@ try:
         inject_custom_styles,
         render_portal_header,
         render_user_badge,
+        render_security_pills,
+        render_password_requirements_card,
+        render_step_indicator,
+        render_html,
     )
 except ImportError:
     from auth import (
@@ -94,13 +99,17 @@ except ImportError:
         inject_custom_styles,
         render_portal_header,
         render_user_badge,
+        render_security_pills,
+        render_password_requirements_card,
+        render_step_indicator,
+        render_html,
     )
 
 
 # ── 1. Page Configuration & Theme Setup ─────────────────────────────────
 st.set_page_config(
-    page_title="Infosys Authentication Portal",
-    page_icon="🛡️",
+    page_title="AI for Maritime Freight Pricing and Route",
+    page_icon="🚢",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
@@ -152,32 +161,50 @@ def reset_forgot_flow():
 
 # A. Admin Dashboard View
 if st.session_state.admin_auth and st.session_state.page == "Admin_Dashboard":
-    render_portal_header("Admin Control Panel", "Administrator Access & Audit")
+    render_portal_header("Admin Control Panel", "Administrator Access & Registry Audit")
     admin_user, _ = get_admin_credentials()
     render_user_badge(username=admin_user, email="admin@system.local", role="Administrator")
 
-    with st.container():
-        st.markdown("### 📋 Registered Users Registry")
-        st.caption("Milestone Step 11: Displaying all registered users (passwords and hashes are strictly masked).")
+    registered_users = get_all_registered_users()
+    user_count = len(registered_users) if registered_users else 0
 
-        registered_users = get_all_registered_users()
+    # Executive Admin KPI Bar
+    kpi1, kpi2, kpi3 = st.columns(3)
+    with kpi1:
+        st.metric(label="Registered Accounts", value=str(user_count), delta="All Active")
+    with kpi2:
+        st.metric(label="Security Level", value="Masked", delta="Zero Exposure")
+    with kpi3:
+        st.metric(label="Audit Protocol", value="Compliant", delta="Milestone Step 11")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    with st.container():
+        st.markdown("### 📋 Registered User Registry")
+        st.caption("Milestone Step 11: Real-time user accounts (passwords and cryptographic hashes are strictly masked).")
+
         if registered_users:
             df = pd.DataFrame(registered_users)
-            # Display only safe columns
             display_df = df[["id", "username", "email", "created_at"]].rename(
                 columns={
                     "id": "ID",
                     "username": "Username",
                     "email": "Registered Email",
-                    "created_at": "Registration Date (UTC)"
+                    "created_at": "Registration Timestamp (UTC)"
                 }
             )
             st.dataframe(display_df, use_container_width=True, hide_index=True)
-            st.markdown(f"**Total Registered Users:** `{len(registered_users)}`")
+            
+            render_html(f"""
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 10px 16px; margin-top: 12px; font-size: 13px; color: #64748B;">
+                <span>Total Registered Users: <b style="color: #0F172A;">{user_count}</b></span>
+                <span style="color: #0D9488; font-weight: 600;">🔒 Password Hashes Masked & Excluded</span>
+            </div>
+            """)
         else:
             st.info("No registered users found in the database. Use the Signup page to register test accounts.")
 
-        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("<br><hr style='border-color: #E2E8F0;'><br>", unsafe_allow_html=True)
         if st.button("🚪 Logout from Admin Dashboard", use_container_width=True):
             st.session_state.admin_auth = False
             st.session_state.page = "Login"
@@ -195,28 +222,59 @@ elif st.session_state.auth_token and st.session_state.page == "Dashboard":
     username = payload.get("username", "User")
     email = payload.get("email", "unknown")
 
-    render_portal_header("User Dashboard", "Secure Authenticated Session")
+    render_portal_header("User Dashboard", "Secure Authenticated Session Active")
     render_user_badge(username=username, email=email, role="User")
 
     with st.container():
-        st.markdown(f"### 👋 Welcome back, **{username}**!")
-        st.markdown(
-            "You have successfully authenticated via JWT. Your session token is active and valid for 2 hours."
-        )
+        render_html(f"""
+        <div style="background: linear-gradient(135deg, #F0FDFA 0%, #FFFFFF 100%); border: 1.5px solid #CCFBF1; border-radius: 14px; padding: 22px 26px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(13,148,136,0.06);">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                <span style="font-size: 22px;">👋</span>
+                <span style="font-size: 1.35rem; font-weight: 800; color: #0F172A;">Welcome back, {username}!</span>
+            </div>
+            <p style="margin: 0; color: #475569; font-size: 14px; line-height: 1.5;">
+                You have authenticated via signed JSON Web Token (JWT) into <b>AI for Maritime Freight Pricing and Route</b>. Your session token is actively verified and protected with tamper-proof HMAC-SHA256 signatures.
+            </p>
+        </div>
+        """)
 
+        # High-Tech KPI Metric Cards
         col1, col2, col3 = st.columns(3)
         with col1:
             st.metric(label="Authentication Status", value="Verified", delta="Active JWT")
         with col2:
-            st.metric(label="Security Level", value="Bcrypt + Salt", delta="HS256")
+            st.metric(label="Cryptographic Security", value="Bcrypt + Salt", delta="HS256")
         with col3:
             st.metric(label="Session Expiry", value="2 Hours", delta="Standard")
 
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("#### 🔒 Account Details")
-        st.write(f"- **Username:** `{username}`")
-        st.write(f"- **Primary Email:** `{email}`")
-        st.write(f"- **Session Token Type:** `Bearer JWT (HS256)`")
+        
+        # Account Details Breakdown
+        render_html(f"""
+        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 22px 26px; margin-bottom: 24px;">
+            <div style="font-size: 15px; font-weight: 700; color: #0F172A; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+                <span>🔒</span> Authenticated Account Parameters
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; font-size: 13.5px;">
+                <div>
+                    <div style="color: #64748B; font-weight: 500;">Username:</div>
+                    <div style="font-weight: 700; color: #0F172A; margin-top: 2px;"><code>{username}</code></div>
+                </div>
+                <div>
+                    <div style="color: #64748B; font-weight: 500;">Primary Email:</div>
+                    <div style="font-weight: 700; color: #0F172A; margin-top: 2px;"><code>{email}</code></div>
+                </div>
+                <div>
+                    <div style="color: #64748B; font-weight: 500;">Token Type:</div>
+                    <div style="font-weight: 700; color: #0D9488; margin-top: 2px;">Bearer JWT (HS256)</div>
+                </div>
+                <div>
+                    <div style="color: #64748B; font-weight: 500;">Password Protection:</div>
+                    <div style="font-weight: 700; color: #0D9488; margin-top: 2px;">Bcrypt (Cost 12)</div>
+                </div>
+            </div>
+        </div>
+        """)
 
         st.markdown("<br><hr style='border-color: #E2E8F0;'><br>", unsafe_allow_html=True)
         if st.button("🚪 Logout", use_container_width=True):
@@ -228,10 +286,18 @@ elif st.session_state.auth_token and st.session_state.page == "Dashboard":
 
 # C. Admin Login View (Step 11)
 elif st.session_state.page == "Admin_Login":
-    render_portal_header("Admin Portal Login", "Restricted Access for Administrators")
+    render_portal_header("Admin Portal Login", "Restricted Access for Authorized Administrators")
 
     with st.container():
-        st.markdown("Enter dedicated administrator credentials to access the user registry:")
+        render_html("""
+        <div style="background: #FEF3C7; border: 1.5px solid #FCD34D; border-radius: 12px; padding: 14px 18px; margin-bottom: 22px; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 20px;">⚠️</span>
+            <div style="font-size: 13px; color: #92400E; font-weight: 600;">
+                RESTRICTED AREA: Superuser credentials required. Unauthorized access attempts are monitored and logged.
+            </div>
+        </div>
+        """)
+
         admin_u_input = st.text_input("Admin Username", placeholder="e.g. admin")
         admin_p_input = st.text_input("Admin Password", type="password", placeholder="••••••••")
 
@@ -254,34 +320,50 @@ elif st.session_state.page == "Admin_Login":
 
 # D. Signup View (Step 3, 7, 8)
 elif st.session_state.page == "Signup":
-    render_portal_header("Create New Account", "Register for Infosys Authentication Portal")
+    render_portal_header("Create New Account", "Register for AI for Maritime Freight Pricing and Route")
+    render_security_pills()
 
     with st.container():
-        st.markdown("Please fill in all mandatory fields to create your account:")
+        render_html("""
+        <div style="font-size: 14px; color: #475569; margin-bottom: 18px; font-weight: 500;">
+            Please complete all 6 mandatory registration fields below:
+        </div>
+        """)
 
-        signup_username = st.text_input("Username *", placeholder="e.g. alex_kumar")
-        signup_email = st.text_input("Email Address *", placeholder="e.g. alex@infosys.com")
-        signup_password = st.text_input(
-            "Password *",
-            type="password",
-            placeholder="Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol"
-        )
-        signup_confirm_password = st.text_input(
-            "Confirm Password *",
-            type="password",
-            placeholder="Re-enter your password"
-        )
+        col_u, col_e = st.columns(2)
+        with col_u:
+            signup_username = st.text_input("Username *", placeholder="e.g. alex_kumar")
+        with col_e:
+            signup_email = st.text_input("Email Address *", placeholder="e.g. alex@infosys.com")
+
+        col_p1, col_p2 = st.columns(2)
+        with col_p1:
+            signup_password = st.text_input(
+                "Password *",
+                type="password",
+                placeholder="Min 8 chars, 1 upper, 1 lower, 1 digit, 1 symbol"
+            )
+        with col_p2:
+            signup_confirm_password = st.text_input(
+                "Confirm Password *",
+                type="password",
+                placeholder="Re-enter your password"
+            )
+
+        # Real-time visual password complexity guide
+        render_password_requirements_card()
+
         signup_sq = st.selectbox(
-            "Security Question * (Used for password recovery)",
+            "Security Question * (Confidential recovery prompt)",
             SECURITY_QUESTIONS
         )
         signup_sa = st.text_input(
             "Security Answer *",
-            placeholder="Your confidential answer"
+            placeholder="Your secret answer (case-insensitive)"
         )
 
         st.markdown("<br>", unsafe_allow_html=True)
-        col_sub1, col_sub2 = st.columns(2)
+        col_sub1, col_sub2 = st.columns([1.3, 1])
 
         with col_sub1:
             if st.button("Complete Registration →", use_container_width=True):
@@ -332,12 +414,20 @@ elif st.session_state.page == "Signup":
                                     st.error(f"❌ {db_msg}")
 
         with col_sub2:
-            if st.button("← Already have an account? Sign In", use_container_width=True):
+            if st.button("← Back to Sign In", use_container_width=True):
                 navigate_to("Login")
 
 # E. Forgot Password View (Step 8 & 9)
 elif st.session_state.page == "Forgot":
     render_portal_header("Reset Password", "Two Secure Identity Verification Routes")
+
+    # Dynamic Step Progress Breadcrumbs
+    current_step = 1
+    if st.session_state.forgot_stage in ["answer", "otp_verify"]:
+        current_step = 2
+    elif st.session_state.forgot_stage == "reset":
+        current_step = 3
+    render_step_indicator(current_step=current_step, total_steps=3)
 
     with st.container():
         # Recovery Route Switcher Tabs
@@ -345,8 +435,11 @@ elif st.session_state.page == "Forgot":
 
         # ── ROUTE 1: SECURITY QUESTION ──
         with route_tab1:
-            st.markdown("#### Recover via Security Question")
-            st.caption("Enter your username to answer the security question you selected at signup.")
+            render_html("""
+            <div style="font-size: 14px; color: #475569; margin-bottom: 14px; font-weight: 500;">
+                Recover access instantly by answering the security question chosen during account registration.
+            </div>
+            """)
 
             sq_uname = st.text_input("Registered Username", key="sq_uname_input", placeholder="e.g. alex_kumar")
 
@@ -363,7 +456,13 @@ elif st.session_state.page == "Forgot":
                         st.session_state.forgot_stage = "answer"
 
             if st.session_state.forgot_stage == "answer" and st.session_state.forgot_identity:
-                st.info(f"❓ **Security Question:** {st.session_state.forgot_sq_text}")
+                render_html(f"""
+                <div style="background: #F0FDFA; border: 1.5px solid #CCFBF1; border-radius: 12px; padding: 16px 20px; margin: 16px 0;">
+                    <div style="font-size: 12px; font-weight: 700; color: #0D9488; text-transform: uppercase; margin-bottom: 4px;">Registered Security Prompt:</div>
+                    <div style="font-size: 15px; font-weight: 700; color: #0F172A;">{st.session_state.forgot_sq_text}</div>
+                </div>
+                """)
+
                 sq_ans_input = st.text_input("Your Security Answer", type="password", key="sq_ans_input")
                 sq_new_pwd = st.text_input("New Password", type="password", key="sq_new_pwd_input",
                                            placeholder="Min 8 chars, uppercase, lowercase, digit, symbol")
@@ -399,8 +498,11 @@ elif st.session_state.page == "Forgot":
 
         # ── ROUTE 2: EMAIL OTP ──
         with route_tab2:
-            st.markdown("#### Recover via One-Time Password (OTP)")
-            st.caption(f"Receive a cryptographically secure 6-digit code via Gmail (expires in {OTP_EXPIRY_MINUTES} mins).")
+            render_html(f"""
+            <div style="font-size: 14px; color: #475569; margin-bottom: 14px; font-weight: 500;">
+                Receive a cryptographically secure 6-digit one-time password via Gmail SMTP (expires in <b>{OTP_EXPIRY_MINUTES} minutes</b>).
+            </div>
+            """)
 
             otp_email_input = st.text_input("Registered Email Address", key="otp_email_input", placeholder="e.g. alex@infosys.com")
 
@@ -433,7 +535,13 @@ elif st.session_state.page == "Forgot":
                                 st.error(f"❌ {email_msg}")
 
             if st.session_state.forgot_stage == "otp_verify" and st.session_state.forgot_email:
-                st.info(f"📩 Verification code sent to **{st.session_state.forgot_email}**. Enter it within {OTP_EXPIRY_MINUTES} minutes.")
+                render_html(f"""
+                <div style="background: #F0FDFA; border: 1.5px solid #CCFBF1; border-radius: 12px; padding: 14px 18px; margin: 16px 0;">
+                    <div style="font-size: 12px; font-weight: 700; color: #0D9488; text-transform: uppercase;">📩 Verification Code Dispatched:</div>
+                    <div style="font-size: 14px; color: #0F172A; margin-top: 4px;">Sent to <b>{st.session_state.forgot_email}</b>. Single-use code valid for <b>{OTP_EXPIRY_MINUTES} minutes</b>.</div>
+                </div>
+                """)
+
                 entered_otp = st.text_input("Enter 6-Digit Code", max_chars=6, key="entered_otp_input", placeholder="e.g. 583921")
                 otp_new_pwd = st.text_input("New Password", type="password", key="otp_new_pwd_input",
                                             placeholder="Min 8 chars, uppercase, lowercase, digit, symbol")
@@ -479,7 +587,8 @@ elif st.session_state.page == "Forgot":
 
 # F. Default: Login View (Step 3 & 7)
 else:
-    render_portal_header("Sign In to Your Account", "Access User Analytics & Dashboard")
+    render_portal_header("Sign In to Your Account", "Access Maritime Analytics & Pricing Gateway")
+    render_security_pills()
 
     with st.container():
         login_identifier = st.text_input(
@@ -536,3 +645,11 @@ else:
         with col_admin:
             if st.button("🛡️ Admin Portal", use_container_width=True):
                 navigate_to("Admin_Login")
+
+    # Trust Footer
+    render_html("""
+    <div style="text-align: center; margin-top: 2.5rem; font-size: 12px; color: #94A3B8;">
+        Infosys Springboard Internship 7.0 &bull; Batch 4 &bull; AI for Maritime Freight Pricing and Route<br>
+        Powered by Streamlit, PyJWT, Bcrypt, and SQLite
+    </div>
+    """)
