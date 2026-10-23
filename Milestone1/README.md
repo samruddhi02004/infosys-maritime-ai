@@ -139,47 +139,6 @@ streamlit run app.py
 
 ---
 
-## 🧪 Automated Test Suite Results
-
-All 27 automated tests pass across unit and integration suites:
-
-```text
-============================= test session starts =============================
-platform win32 -- Python 3.13.15, pytest-9.1.1, pluggy-1.7.0
-rootdir: C:\Users\Lenovo\Documents\maritime-ai
-collected 27 items
-
-Milestone1/tests/test_auth.py::TestFieldValidations::test_mandatory_fields_success PASSED          [  3%]
-Milestone1/tests/test_auth.py::TestFieldValidations::test_mandatory_fields_empty_fails PASSED      [  7%]
-Milestone1/tests/test_auth.py::TestFieldValidations::test_email_validation_milestone_rules PASSED  [ 11%]
-Milestone1/tests/test_auth.py::TestFieldValidations::test_password_complexity_rules PASSED        [ 14%]
-Milestone1/tests/test_auth.py::TestFieldValidations::test_password_confirmation PASSED            [ 18%]
-Milestone1/tests/test_auth.py::TestBcryptHashing::test_password_hashing_and_verification PASSED    [ 22%]
-Milestone1/tests/test_auth.py::TestBcryptHashing::test_security_answer_normalization_and_verification PASSED [ 25%]
-Milestone1/tests/test_auth.py::TestJWTSession::test_jwt_session_lifecycle PASSED                  [ 29%]
-Milestone1/tests/test_auth.py::TestJWTSession::test_jwt_tampering_rejected PASSED                  [ 33%]
-Milestone1/tests/test_auth.py::TestJWTSession::test_jwt_expiration PASSED                          [ 37%]
-Milestone1/tests/test_database.py::TestDatabaseOperations::test_create_and_fetch_user PASSED     [ 40%]
-Milestone1/tests/test_database.py::TestDatabaseOperations::test_duplicate_username_rejection PASSED [ 44%]
-Milestone1/tests/test_database.py::TestDatabaseOperations::test_duplicate_email_rejection PASSED  [ 48%]
-Milestone1/tests/test_database.py::TestDatabaseOperations::test_password_update PASSED            [ 51%]
-Milestone1/tests/test_database.py::TestDatabaseOperations::test_admin_get_all_users_never_exposes_passwords PASSED [ 55%]
-Milestone1/tests/test_database.py::TestOTPTokenTracking::test_otp_lifecycle_and_single_use PASSED [ 59%]
-Milestone1/tests/test_database.py::TestOTPTokenTracking::test_expired_otp_rejection PASSED      [ 62%]
-Milestone1/tests/test_database.py::TestOTPTokenTracking::test_incorrect_otp_attempt_limits PASSED [ 66%]
-Milestone1/tests/test_end_to_end_flow.py::TestEndToEndMilestoneFlows::test_signup_and_dual_login_flow PASSED [ 70%]
-Milestone1/tests/test_end_to_end_flow.py::TestEndToEndMilestoneFlows::test_forgot_password_via_security_question_flow PASSED [ 74%]
-Milestone1/tests/test_end_to_end_flow.py::TestEndToEndMilestoneFlows::test_forgot_password_via_otp_flow PASSED [ 77%]
-Milestone1/tests/test_end_to_end_flow.py::TestEndToEndMilestoneFlows::test_admin_portal_flow PASSED [ 81%]
-Milestone1/tests/test_otp_service.py::TestOTPService::test_generate_otp PASSED                   [ 85%]
-Milestone1/tests/test_otp_service.py::TestOTPService::test_otp_session_success_and_single_use PASSED [ 88%]
-Milestone1/tests/test_otp_service.py::TestOTPService::test_otp_session_wrong_otp PASSED           [ 92%]
-Milestone1/tests/test_otp_service.py::TestOTPService::test_otp_session_email_mismatch PASSED     [ 96%]
-Milestone1/tests/test_otp_service.py::TestOTPService::test_send_email_graceful_missing_credentials PASSED [100%]
-
-============================= 27 passed in 44.16s =============================
-```
-
 ---
 
 ## 📷 Screenshots
